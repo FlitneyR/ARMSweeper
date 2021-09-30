@@ -56,7 +56,7 @@ makeCell:
     cmp     X2, #0
     beq     notBomb         ;   if(seed & 12 != 0){
     ORR     X0, X0, #BOMB   ;       cell |= BOMB
-notBomb                     ;   }
+notBomb:                    ;   }
 
     ldr     lr, [sp], #16
     ret
