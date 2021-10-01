@@ -91,31 +91,47 @@ notBomb:                    ;   }
 ; -----------------------------------------
 setCounts:
 
-    ;   board(X9) = X0
-    ;   y(X10) = 0
-    ;   while(y(X10) < 8){
-    ;       x(X11) = 0
-    ;       while(x(X11) < 8){
-    ;           cell(X12) = board[x(X11) + y(X10) << 3]
-    ;           dy(X13) = -1
-    ;           if(y == 0)
-    ;               dy++
-    ;           while(dy(X13) + y(X10) < 8){
-    ;               dx(X14) = -1
-    ;               if(x == 0)
-    ;                   dx++
-    ;               while(dx(X14) + x < 8){
-    ;                   dcell(X15) = board[x(X11) + dx(X14) + (y(X10) + dy(X13)) << 3]
-    ;                   if(dcell(X15) & BOMB != 0)
-    ;                       cell(X12)++
-    ;                   dx++
-    ;               }
-    ;               dy++
-    ;           }
-    ;           board[x(X11) + y(X10) << 3] = cell(X12)
-    ;           x++
-    ;       }
-    ;       y++
-    ;   }
+    mov     X9, X0                  ;   board(X9) = X0
+    mov     X10, #0                 ;   y(X10) = 0
+setCounts_while1_start:
+    cmp     X10, #8
+    bge     setCounts_while1_end    ;   while(y(X10) < 8){
+    mov     X11, #0                 ;       x(X11) = 0
+setCounts_while2_start:
+    cmp     X11, #0
+    bge     setCounts_while2_end    ;       while(x(X11) < 8){
+    add     X0, X9, X11
+    ldrb    W12, [X0, X10, lsl 3]   ;           cell(X12) = board(X9)[x(X11) + y(X10) << 3]
+    mov     X13, #-1                ;           dy(X13) = -1
+    cmp     X10, #0                 ;           if(y(X10) == 0)
+    addeq   X13, X13, #1            ;               dy(X13)++
+setCounts_while3_start:
+    add     X0, X13, X10
+    cmp     X0, #8
+    bge     setCounts_while3_end    ;           while(dy(X13) + y(X10) < 8){
+    mov     X14, #-1                ;               dx(X14) = -1
+    cmp     X11, #0                 ;               if(x(X11) == 0)
+    addeq   X14, X14, #1            ;                   dx(X14)++
+setCounts_while4_start:
+    add     X0, X14, X11
+    cmp     X0, #8
+    bge     setCounts_while4_end    ;               while(dx(X14) + x(X11) < 8){
+    add     X0, X11, X14
+    add     X0, X9, X0
+    add     X1, X10, X13
+    ldrb    X15, [X0, X1, lsl 3]    ;                   dcell(X15) = board(X9)[x(X11) + dx(X14) + (y(X10) + dy(X13)) << 3]
+    and     X0, X15, #BOMB
+    cmp     X0, #0                  ;                   if(dcell(X15) & BOMB != 0)
+    addeq   X12, X12, #1            ;                       cell(X12)++
+    add     X14, X14, #1            ;                   dx(X14)++
+setCounts_while4_end:               ;               }
+    add     X13, X13, #1            ;               dy(X13)++
+setCounts_while3_end:               ;           }
+    add     X0, X9, X11
+    strb    W12, [X0, X10, lsl 3]   ;           board(X9)[x(X11) + y(X10) << 3] = cell(X12)
+    add     X11, X11, #1            ;           x(X11)++
+setCounts_while2_end:               ;       }
+    add     X10, X10, #1            ;       y(X10)++
+setCounts_while1_end                ;   }
 
     ret
