@@ -26,16 +26,27 @@
 makeBoard:
     str     lr, [sp, #-16]!
 
-    ;   board = X0
-    ;   seed = X1
-    ;   i = 0
-    ;   while(i < 100){
-    ;       seed = random(seed)
-    ;       board[i] = makeCell(seed)
-    ;       if(i % 8 == 0){
-    ;           board |= END_OF_ROW
-    ;       }
-    ;   }
+    mov     X19, X0     ;   board(X19) = X0
+    mov     X20, X1     ;   seed(X20) = X1
+    mov     X21, #0     ;   i(X21) = 0
+makeBoard_while_start:
+    cmp     X21, #64
+    bge     makeBoard_while_end
+                        ;   while(i(X21) < 64){
+    mov     X0, X20
+    bl      random
+    mov     X20, X0     ;       seed(X20) = random(seed(X20))
+    bl      makeCell
+    mov     X22, X0     ;       cell(X22) = makeCell(seed(X20))
+    and     X0, X21, #7
+    cmp     X0, #7
+    bne     notEor      ;       if(i(X21) % 8 == 7){
+    orr     X22, X22, #END_OF_ROW
+                        ;           cell(X22) |= END_OF_ROW
+notEOR:                 ;       }
+    strb    W22, [X19, X21]
+                        ;       board(X19)[i(X21)] = cell(X22)
+makeBoard_while_end:    ;   }
 
     ldr     lr, [sp], #16
     ret

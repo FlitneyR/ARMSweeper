@@ -3,7 +3,7 @@ A simple game of mine sweeper in Aarch64 assembly
 
 ## Custom Data types:
 
-The board is a 100 byte array. Every row is 10 bytes long
+The board is a 64 byte array. Every row is 8 bytes long
 and the last cell on each row has the EOR (End of row)
 flag set.
 
