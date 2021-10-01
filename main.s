@@ -1,6 +1,8 @@
 ; -------------------------------------------
 ;   main.s
-;   Dependencies: makeBoard.s, printBoard.s
+;   Dependencies:
+;       makeBoard.s, printBoard.s
+;       printNum.s, remDiv.s
 ; -------------------------------------------
 
 .text

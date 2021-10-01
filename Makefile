@@ -1,7 +1,7 @@
 clean:
 	rm *.o
 
-main: main.o makeBoard.s printBoard.s print.s random.s printNum.s
+main: main.o makeBoard.s printBoard.s print.s random.s printNum.s remDiv.s
 	gcc -o $@ $^
 
 %.o: %.s

@@ -29,17 +29,48 @@
 printBoard:
     str     lr, [sp, #-16]!
 
-    ;   board = X0
-    ;   print(&header)
-    ;   print(&start)
-    ;   while(*board != -1){
-    ;       printCell(board)
-    ;       print(&seperator)
-    ;       if(*board & END_OF_ROW){
-    ;           print(&EOR)
-    ;       }
-    ;   }
-    ;   print(&header)
+    mov     X19, X0                 ;   board(X19) = X0
+    mov     X20, #0                 ;   i(X20) = 0
+    adrp    X0, header@PAGE
+    add     X0, X0, header@PAGEOFF
+    bl      print                   ;   print(&header)
+
+    adrp    X0, start@PAGE
+    add     X0, X0, start@PAGEOFF
+    bl      print                   ;   print(&start)
+
+printBoard_while_start:
+    cmp     X20, #64
+    bge     printBoard_while_end    ;   while(i < 64){
+    ldrb    W0, [X19, X20]
+    bl      printCell               ;       printCell(board(X19) + i(X20))
+
+    adrp    X0, seperator@PAGE
+    add     X0, X0, seperator@PAGEOFF
+    bl      print                   ;       print(&seperator)
+
+    and     X0, X20, #7
+    cmp     X0, #7
+    bne     notEOR                  ;       if(i(X20) & 7 == 7){
+    
+    adrp    X0, E_O_R@PAGE
+    add     X0, X0, E_O_R@PAGEOFF
+    bl      print                   ;           print(&E_O_R)
+
+    cmp     X20, #60                ;           if(i(X20) < 60)
+    bge     notEOR
+
+    adrp    X0, start@PAGE
+    add     X0, X0, start@PAGEOFF
+    bl      print                   ;               print(&start)
+notEOR:                             ;       }
+    add     X20, X20, #1            ;       i(X20)++
+
+    b       printBoard_while_start
+printBoard_while_end:               ;   }
+    adrp    X0, header@PAGE
+    add     X0, X0, header@PAGEOFF
+    bl      print                   ;   print(&header)
 
     ldr     lr, [sp], #16
     ret
@@ -47,7 +78,7 @@ printBoard:
 ; ----------------------------------------------------------
 ;   printCell
 ;   Input:
-;       X0 - pointer to cell
+;       X0 - cell
 ;   Output:
 ;       None
 ;   Side effects:
@@ -59,7 +90,7 @@ printCell:
 
     mov     X3, X0                  ;   cell(X3) = X0
 
-    and     X0, X3, #HIDDEN
+    and     X0, X3, #REVEALED
     cmp     X0, #0
     bne     revealed                ;   if(cell(X3) & REVEALED = 0){
     adrp    X0, hidden@PAGE
@@ -74,7 +105,7 @@ revealed:                           ;   }
     add     X0, X0, flag@PAGEOFF
     bl      print                   ;       print(&flag)
     b       printCell_return        ;       return
-notFlagged                          ;   }
+notFlagged:                         ;   }
     and     X0, X3, #BOMB
     cmp     X0, #0
     beq     notBomb                 ;   if(cell(X3) & BOMB != 0){
@@ -92,7 +123,7 @@ printCell_return:
 
 .data
 header:
-    .asciz "+---------------------+\n"
+    .asciz "+-----------------+\n"
 
 start:
     .asciz "| "
@@ -109,7 +140,7 @@ flag:
 bomb:
     .asciz "B"
 
-EOR:
+E_O_R:
     .asciz "|\n"
 
 ;+---------------------+
