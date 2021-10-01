@@ -40,7 +40,7 @@ makeBoard_while_start:
     mov     X22, X0     ;       cell(X22) = makeCell(seed(X20))
     and     X0, X21, #7
     cmp     X0, #7
-    bne     notEor      ;       if(i(X21) % 8 == 7){
+    bne     notEOR      ;       if(i(X21) % 8 == 7){
     orr     X22, X22, #END_OF_ROW
                         ;           cell(X22) |= END_OF_ROW
 notEOR:                 ;       }
