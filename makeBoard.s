@@ -13,6 +13,7 @@
 
 .global makeBoard
 .global makeCell
+.global setCounts
 
 ; ----------------------------------------------------
 ;   makeBoard
@@ -53,6 +54,9 @@ notEOR:                             ;       }
     b       makeBoard_while_start
 makeBoard_while_end:                ;   }
 
+    mov     X0, X19
+    bl      setCounts
+
     ldr     lr, [sp], #16
     ret
 
@@ -73,5 +77,45 @@ makeCell:
     bne     notBomb         ;   if(seed & 12 != 0){
     ORR     X0, X0, #BOMB   ;       cell |= BOMB
 notBomb:                    ;   }
+
+    ret
+
+; -----------------------------------------
+;   setCounts
+;   Input:
+;       X0 - pointer to board
+;   Output:
+;       None
+;   Side effects:
+;       Board cell counts will be updated
+; -----------------------------------------
+setCounts:
+
+    ;   board(X9) = X0
+    ;   y(X10) = 0
+    ;   while(y(X10) < 8){
+    ;       x(X11) = 0
+    ;       while(x(X11) < 8){
+    ;           cell(X12) = board[x(X11) + y(X10) << 3]
+    ;           dy(X13) = -1
+    ;           if(y == 0)
+    ;               dy++
+    ;           while(dy(X13) + y(X10) < 8){
+    ;               dx(X14) = -1
+    ;               if(x == 0)
+    ;                   dx++
+    ;               while(dx(X14) + x < 8){
+    ;                   dcell(X15) = board[x(X11) + dx(X14) + (y(X10) + dy(X13)) << 3]
+    ;                   if(dcell(X15) & BOMB != 0)
+    ;                       cell(X12)++
+    ;                   dx++
+    ;               }
+    ;               dy++
+    ;           }
+    ;           board[x(X11) + y(X10) << 3] = cell(X12)
+    ;           x++
+    ;       }
+    ;       y++
+    ;   }
 
     ret

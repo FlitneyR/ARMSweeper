@@ -138,7 +138,7 @@ flag:
     .asciz "F"
 
 bomb:
-    .asciz "B"
+    .asciz "*"
 
 E_O_R:
     .asciz "|\n"
