@@ -1,6 +1,7 @@
-; ---------------------------------------------
-;   makeBoard.s - Robert Flitney - 30/09/2021
-; ---------------------------------------------
+; --------------------------
+;   makeBoard.s
+;   Dependencies: random.s
+; --------------------------
 
 #define END_OF_ROW 128
 #define BOMB 16
@@ -39,16 +40,15 @@ makeBoard:
     ldr     lr, [sp], #16
     ret
 
-; ----------------------------------------------------
+; ---------------------
 ;   makeCell
 ;   Input:
 ;       X0 - seed
 ;   Output:
 ;       X0 - new cell
 ;   Destroys: X1, X2
-; ----------------------------------------------------
+; ---------------------
 makeCell:
-    str     lr, [sp, #-16]!
     
     mov     X1, X0          ;   seed(X1) = X0
     mov     X0, #0          ;   cell(X0) = 0
@@ -58,5 +58,4 @@ makeCell:
     ORR     X0, X0, #BOMB   ;       cell |= BOMB
 notBomb:                    ;   }
 
-    ldr     lr, [sp], #16
     ret
