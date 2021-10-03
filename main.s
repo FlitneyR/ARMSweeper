@@ -61,6 +61,10 @@ noWin:
 noLose:
 
     bl      getInput
+    mov     X3, X2
+    mov     X2, X1
+    mov     X1, X0
+    mov     X0, X19
     bl      modify
 
     b       main_loop
