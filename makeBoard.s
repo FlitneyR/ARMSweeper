@@ -81,9 +81,9 @@ makeCell:
     
     mov     X1, X0          ;   seed(X1) = X0
     mov     X0, #0          ;   cell(X0) = 0
-    and     X2, X1, #12
-    cmp     X2, #0
-    bne     notBomb         ;   if(seed & 12 != 0){
+    and     X2, X1, #31
+    cmp     X2, #5
+    bge     notBomb         ;   if(seed & 31 < 5){
     ORR     X0, X0, #BOMB   ;       cell |= BOMB
 notBomb:                    ;   }
 
