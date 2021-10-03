@@ -28,6 +28,8 @@
 ; ----------------------------------------------------------
 printBoard:
     str     lr, [sp, #-16]!
+    str     X19, [sp, #-16]!
+    str     X20, [sp, #-16]!
 
     mov     X19, X0                 ;   board(X19) = X0
     mov     X20, #0                 ;   i(X20) = 0
@@ -72,6 +74,8 @@ printBoard_while_end:               ;   }
     add     X0, X0, header@PAGEOFF
     bl      print                   ;   print(&header)
 
+    ldr     X20, [sp], #16
+    ldr     X19, [sp], #16
     ldr     lr, [sp], #16
     ret
 

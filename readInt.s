@@ -31,7 +31,7 @@ readInt:
     mov     X1, X19
     sub     X2, X20, X19
     mov     X16, #3
-    svc     0
+    svc     0           ;   read(STDIN, &buff, buffEnd - buff)
 
     mov     X0, X19
     bl      INTerp      ;   num(X0) = INTerp(&buff)

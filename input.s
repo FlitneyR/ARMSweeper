@@ -15,12 +15,55 @@
 ;       X2 - change to be made
 ; ------------
 getInput:
+    str     lr, [sp, #-16]!
+    str     X19, [sp, #-16]!
+    str     X20, [sp, #-16]!
+    str     X21, [sp, #-16]!
 
-    
+    adrp    X0, columnPrompt@PAGE
+    add     X0, X0, columnPrompt@PAGEOFF
+    bl      print       ;   print(columnPrompt)
+    bl      readInt
+    mov     X0, X19     ;   col(X19) = readInt()
 
+    adrp    X0, rowPrompt@PAGE
+    add     X0, X0, rowPrompt@PAGEOFF
+    bl      print       ;   print(rowPrompt)
+    bl      readInt
+    mov     X0, X20     ;   row(X20) = readInt()
+
+
+    adrp    X0, changePrompt@PAGE
+    add     X0, X0, changePrompt@PAGEOFF
+    bl      print       ;   print(changePrompt)
+
+    mov     X0, #1
+    adrp    X1, buffer@PAGE
+    add     X1, X1, buffer@PAGEOFF
+    mov     X2, #32
+    mov     X16, #3
+    svc     0           ; read(STDIN, &buffer, 32)
+
+    adrp    X0, buffer@PAGE
+    add     X0, X0, buffer@PAGEOFF
+    ldrb    W21, [X0]
+
+    mov     X0, X19
+    mov     X1, X20
+    mov     X2, X21
+
+    ldr     X21, [sp], #16
+    ldr     X20, [sp], #16
+    ldr     X19, [sp], #16
+    ldr     lr, [sp], #16
     ret
 
+
+
 .data
+
+buffer:
+    .skip 32
 
 columnPrompt:
     .asciz "Which column would you like to change? "
