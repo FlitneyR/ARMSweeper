@@ -90,6 +90,10 @@ printCell:
 
     mov     X3, X0                  ;   cell(X3) = X0
 
+    and     X0, X3, #15
+    cmp     X0, #0
+    beq     revealed
+
     and     X0, X3, #REVEALED
     cmp     X0, #0
     bne     revealed                ;   if(cell(X3) & REVEALED = 0){
@@ -132,7 +136,7 @@ seperator:
     .asciz " "
 
 hidden:
-    .asciz "#"
+    .asciz " "
 
 flag:
     .asciz "F"

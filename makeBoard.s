@@ -52,7 +52,7 @@ makeBoard_while_start:
     orr     X22, X22, #END_OF_ROW
                                     ;           cell(X22) |= END_OF_ROW
 notEOR:                             ;       }
-    orr     X22, X22, #REVEALED
+    ; orr     X22, X22, #REVEALED     ;     //  cell(X22) |= REVEALED
     strb    W22, [X19, X21]
                                     ;       board(X19)[i(X21)] = cell(X22)
     add     X21, X21, #1            ;       i(21)++
