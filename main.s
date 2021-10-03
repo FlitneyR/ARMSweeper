@@ -13,26 +13,43 @@
 _main:
     str     lr, [sp, #-16]!
 
+    cmp     X0, #2
+    beq     goodArgs
+
+    adrp    X0, badArgs@PAGE
+    add     X0, X0, badArgs@PAGEOFF
+    bl      print
+    b       return
+
+goodArgs:
+
+    ldr     X0, [X1, #8]
+    bl      INTerp
+    mov     X20, X0
+
     adrp    X19, board@PAGE
     add     X19, X19, board@PAGEOFF
+                        ;   &board(X19) = &board
 
-    adrp    X0, seedPrompt@PAGE
-    add     X0, X0, seedPrompt@PAGEOFF
-    bl      print
-    bl      readInt
-    mov     X1, X0
+    mov     X0, X20
+    bl      random
+    mov     X20, X0     ;   seed(X20) = random(seed(X20))
+
     mov     X0, X19
-    bl      makeBoard   ;   makeBoard(&board)
+    mov     X1, X20
+    bl      makeBoard   ;   makeBoard(&board(X19), seed(X20))
 
     mov     X0, X19
     bl      printBoard
+
+return:
 
     ldr     lr, [sp], #16
     ret
 
 .data
 board:
-    .skip 100
+    .skip 64
 
-seedPrompt:
-    .asciz "Enter a seed for this game: "
+badArgs:
+    .asciz "Invalid args\n"
