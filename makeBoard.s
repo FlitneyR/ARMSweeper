@@ -7,6 +7,7 @@
 #define REVEALED 64
 #define FLAGGED 32
 #define BOMB 16
+#define COUNT 15
 
 .text
 .align 2

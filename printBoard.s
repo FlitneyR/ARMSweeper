@@ -7,6 +7,7 @@
 #define REVEALED 64
 #define FLAGGED 32
 #define BOMB 16
+#define COUNT 15
 
 .text
 .align 2
@@ -94,7 +95,7 @@ printCell:
 
     mov     X3, X0                  ;   cell(X3) = X0
 
-    and     X0, X3, #15
+    and     X0, X3, #COUNT
     cmp     X0, #0
     beq     revealed
 
@@ -122,7 +123,7 @@ notFlagged:                         ;   }
     bl      print                   ;       print(&bomb)
     b       printCell_return        ;       return
 notBomb:                            ;   }
-    and     X0, X3, #15
+    and     X0, X3, #COUNT
     bl      printNum                ;   printNum(cell & 15)
 
 printCell_return:

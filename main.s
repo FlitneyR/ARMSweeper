@@ -38,6 +38,8 @@ goodArgs:
     bl      makeBoard   ;   makeBoard(&board(X19), seed(X20))
 
 main_loop:
+    mov     X0, X19
+    bl      ripple
 
     mov     X0, X19
     bl      printBoard
