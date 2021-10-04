@@ -44,6 +44,7 @@ main_loop:
     mov     X0, X19
     bl      printBoard
 
+    mov     X0, X19
     bl      checkGameOver
     cmp     X0, #1
     bne     noWin
@@ -73,7 +74,7 @@ noLose:
 
 exit:
     mov     X0, #0
-    mov     X16, #0
+    mov     X16, #1
     svc     0       ;   exit(0)
 
 

@@ -43,11 +43,11 @@ modify:
     beq     flag
     b       noFlag
 flag:                           ;   if(change(X22) == 'f' || change(X22) == 'F'){
-    eor     W9, W9, #FLAGGED    ;       cell(W9) |= FLAGGED
+    eor     W9, W9, #FLAGGED    ;       cell(W9) ^= FLAGGED
 noFlag:                         ;   }
-    cmp     X22, 'f'
+    cmp     X22, 'r'
     beq     reveal
-    cmp     X22, 'F'
+    cmp     X22, 'R'
     beq     reveal
     b       noReveal
 reveal:                         ;   if(change(X22) == 'r' || change(X22) == 'R'){
@@ -71,7 +71,8 @@ noReveal:                       ;   }
 ripple:
 
     mov     X9, X0              ;   board(X9) = arg0
-    
+
+repeat:
     mov     X10, #0             ;   repeat(X10) = 0
     mov     X11, #0             ;   y(X11) = 0
 ripple_while1_start:
@@ -84,12 +85,12 @@ ripple_while2_start:
     add     X0, X12, X11, lsl #3
     ldrb    W13, [X9, X0]       ;           cell(X13) = board(X9)[x(X12) + (y(X11) << 3)]
 
-    and     X0, X13, #BOMB
+    and     X0, X13, #REVEALED
     cmp     X0, #0
-    bne     skipCell
+    beq     skipCell
     and     X0, X13, #COUNT
     cmp     X0, #0
-    bne     skipCell            ;           if(cell(X13) & BOMB = 0 && cell(X13) & COUNT = 0){
+    bne     skipCell            ;           if(cell(X13) & REVEALED != 0 && cell(X13) & COUNT = 0){
     
     mov     X14, #-1            ;               dy(X14) = -1
     cmp     X11, #0
@@ -121,7 +122,11 @@ ripple_while4_start:
     and     X0, X13, #BOMB
     cmp     X0, #0
     bne     dontReveal          ;                       if(cell(X13) & BOMB == 0){
-    mov     X10, #1             ;                           repeat(X10) = 1
+    and     X0, X13, #REVEALED
+    cmp     X0, #0
+    bne     alreadyRevealed     ;                           if(cell(X13) & REVEALED == 0){
+    mov     X10, #1             ;                               repeat(X10) = 1
+alreadyRevealed:                ;                           }
     orr     X13, X13, #REVEALED ;                           cell(X13) |= REVEALED
     strb    W13, [X9, X2]       ;                           board(X9)[(x(X12) + dx(X15)) + ((y(X11) + dy(X14)) << 3)] = cell(X13)
 dontReveal:                     ;                       }
@@ -139,5 +144,9 @@ ripple_while2_end:              ;       }
     add     X11, X11, #1        ;   y(X11)++
     b       ripple_while1_start
 ripple_while1_end:              ;   }
+
+    cmp     X10, #0             ;   if(repeat(X10) != 0){
+    bne     repeat              ;       repeat
+                                ;   }
 
     ret

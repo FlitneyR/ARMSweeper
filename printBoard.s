@@ -95,18 +95,10 @@ printCell:
 
     mov     X3, X0                  ;   cell(X3) = X0
 
-    and     X0, X3, #COUNT
-    cmp     X0, #0
-    beq     revealed
+    ; and     X0, X3, #COUNT
+    ; cmp     X0, #0
+    ; beq     revealed
 
-    and     X0, X3, #REVEALED
-    cmp     X0, #0
-    bne     revealed                ;   if(cell(X3) & REVEALED = 0){
-    adrp    X0, hidden@PAGE
-    add     X0, X0, hidden@PAGEOFF
-    bl      print                   ;       print(&hidden)
-    b       printCell_return        ;       return
-revealed:                           ;   }
     and     X0, X3, #FLAGGED
     cmp     X0, #0
     beq     notFlagged              ;   if(cell(X3) & FLAGGED != 0){
@@ -115,6 +107,14 @@ revealed:                           ;   }
     bl      print                   ;       print(&flag)
     b       printCell_return        ;       return
 notFlagged:                         ;   }
+    and     X0, X3, #REVEALED
+    cmp     X0, #0
+    bne     revealed                ;   if(cell(X3) & REVEALED = 0){
+    adrp    X0, hidden@PAGE
+    add     X0, X0, hidden@PAGEOFF
+    bl      print                   ;       print(&hidden)
+    b       printCell_return        ;       return
+revealed:                           ;   }
     and     X0, X3, #BOMB
     cmp     X0, #0
     beq     notBomb                 ;   if(cell(X3) & BOMB != 0){
